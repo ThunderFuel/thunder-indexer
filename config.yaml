@@ -1,0 +1,14 @@
+name: Thunder Exchange Fuel
+networks:
+  - id: 0
+    start_block: 6000000
+    contracts:
+      - name: Exchange
+        address: 0xc5fbe89423bc290215a184f4e607e39340ef475b27f5b761fb9fa873bc937700
+        abi_file_path: ./abis/thunder-exchange-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: OrderPlaced
+          - name: OrderUpdated
+          - name: OrderExecuted
+          - name: OrderCanceled
