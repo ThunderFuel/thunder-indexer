@@ -4,7 +4,7 @@ enum Side {
 }
 
 enum Status {
-  Listed
+  Placed
   Updated
   Canceled
   Filled

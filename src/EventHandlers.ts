@@ -43,7 +43,7 @@ function getMakerOrderIdFromTaker(side: "Buy" | "Sell", nonce: BigInt) {
 
 function decodeMarketOrder(
   eventOrder: ExchangeContract_type_id_12,
-  status: "Listed" | "Canceled" | "Filled" | "Updated"
+  status: "Placed" | "Canceled" | "Filled" | "Updated"
 ): makerOrderEntity {
 
   return {
@@ -84,7 +84,7 @@ ExchangeContract.OrderPlaced.loader(({ event, context }) => {
 });
 
 ExchangeContract.OrderPlaced.handler(({ event, context }) => {
-  const makerOrder = decodeMarketOrder(event.data.order, "Listed");
+  const makerOrder = decodeMarketOrder(event.data.order, "Placed");
   context.OrderPlaced.set({
     id: nanoid(),
     order_id: makerOrder.id,
