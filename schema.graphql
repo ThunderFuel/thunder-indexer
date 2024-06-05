@@ -3,6 +3,13 @@ enum Side {
   Sell
 }
 
+enum Status {
+  Listed
+  Updated
+  Canceled
+  Filled
+}
+
 type MakerOrder {
   id: ID!
   side: Side!
@@ -16,6 +23,7 @@ type MakerOrder {
   payment_asset: ID!
   start_time: String!
   end_time: String!
+  status: Status!
 }
 
 type TakerOrder {
