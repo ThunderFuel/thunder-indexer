@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "chai": "4.3.10",
-    "envio": "0.0.1-fuel",
+    "envio": "1.1.2-fuel",
     "ethers": "6.8.0",
     "nanoid": "3.3.7"
   },

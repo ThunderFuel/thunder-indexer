@@ -49,14 +49,14 @@ function decodeMarketOrder(
   return {
     id: getMakerOrderId(eventOrder.side.case, eventOrder.nonce),
     side: eventOrder.side.case,
-    maker: eventOrder.maker.value,
-    collection: eventOrder.collection.value,
+    maker: eventOrder.maker.bits,
+    collection: eventOrder.collection.bits,
     token_id: eventOrder.token_id,
     price: eventOrder.price,
     amount: eventOrder.amount,
     nonce: eventOrder.nonce,
-    strategy: eventOrder.strategy.value,
-    payment_asset: eventOrder.payment_asset.value,
+    strategy: eventOrder.strategy.bits,
+    payment_asset: eventOrder.payment_asset.bits,
     start_time: tai64ToDate(eventOrder.start_time),
     end_time: tai64ToDate(eventOrder.end_time),
     status
@@ -68,14 +68,14 @@ function decodeTakerOrder(
 ): takerOrderEntity {
   return {
     id: nanoid(),
-    taker: eventOrder.taker.value,
+    taker: eventOrder.taker.bits,
     side: eventOrder.side.case,
-    maker: eventOrder.maker.value,
-    collection: eventOrder.collection.value,
+    maker: eventOrder.maker.bits,
+    collection: eventOrder.collection.bits,
     token_id: eventOrder.token_id,
     price: eventOrder.price,
     nonce: eventOrder.nonce,
-    strategy: eventOrder.strategy.value,
+    strategy: eventOrder.strategy.bits,
   };
 }
 
@@ -148,8 +148,8 @@ ExchangeContract.OrderCanceled.loader(({ event, context }) => {
 ExchangeContract.OrderCanceled.handler(({ event, context }) => {
   context.OrderCanceled.set({
     id: nanoid(),
-    user: event.data.user.value,
-    strategy: event.data.strategy.value,
+    user: event.data.user.bits,
+    strategy: event.data.strategy.bits,
     side: event.data.side.case,
     nonce: event.data.nonce,
   });
