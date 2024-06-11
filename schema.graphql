@@ -16,6 +16,7 @@ type MakerOrder {
   maker: String!
   collection: ID!
   token_id: ID!
+  token_key: ID!
   price: BigInt!
   amount: BigInt!
   nonce: BigInt!
