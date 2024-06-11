@@ -12,3 +12,11 @@ networks:
           - name: OrderUpdated
           - name: OrderExecuted
           - name: OrderCanceled
+      - name: Pool
+        address: 0x6e7b503001d4f3ad0cb957d0201263c674e4cc744cece5cca587beec8422662e
+        abi_file_path: ./abis/pool-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: Deposit
+          - name: Withdrawal
+          - name: Transfer

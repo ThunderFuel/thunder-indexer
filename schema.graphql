@@ -61,3 +61,8 @@ type OrderCanceled {
   side: Side!
   nonce: BigInt!
 }
+
+type UserBidBalance {
+  id: ID!
+  bid_balance: BigInt!
+}

@@ -4,6 +4,7 @@ import {
   ExchangeContract_type_id_21,
   makerOrderEntity,
   takerOrderEntity,
+  PoolContract
 } from "generated";
 import { nanoid } from "nanoid";
 
@@ -175,5 +176,68 @@ ExchangeContract.OrderCanceled.handler(({ event, context }) => {
       end_time: makerOrder.end_time,
       status: "Canceled"
     })
+  }
+});
+
+PoolContract.Deposit.loader(({ event, context }) => {
+  const userAddress = event.data.address.payload.bits
+  context.UserBidBalance.load(userAddress)
+});
+
+PoolContract.Deposit.handler(({ event, context }) => {
+  const userAddress = event.data.address.payload.bits
+  const user = context.UserBidBalance.get(userAddress)
+
+  if (user) {
+    const prevBidBalance = user.bid_balance
+    const newBidBalance = prevBidBalance + event.data.amount
+    context.UserBidBalance.set({
+      id: user.id,
+      bid_balance: newBidBalance
+    });
+  } else {
+    context.UserBidBalance.set({
+      id: userAddress,
+      bid_balance: event.data.amount
+    });
+  }
+});
+
+PoolContract.Withdrawal.loader(({ event, context }) => {
+  const userAddress = event.data.address.payload.bits
+  context.UserBidBalance.load(userAddress)
+});
+
+PoolContract.Withdrawal.handler(({ event, context }) => {
+  const userAddress = event.data.address.payload.bits
+  const user = context.UserBidBalance.get(userAddress)
+
+  if (user) {
+    const prevBidBalance = user.bid_balance
+    const newBidBalance = prevBidBalance - event.data.amount
+    context.UserBidBalance.set({
+      id: user.id,
+      bid_balance: newBidBalance
+    });
+  }
+});
+
+PoolContract.Transfer.loader(({ event, context }) => {
+  const fromUserAddress = event.data.from.payload.bits
+  context.UserBidBalance.load(fromUserAddress)
+});
+
+PoolContract.Transfer.handler(({ event, context }) => {
+  const fromUserAddress = event.data.from.payload.bits
+
+  const fromUser = context.UserBidBalance.get(fromUserAddress)
+
+  if (fromUser) {
+    const prevBidBalance = fromUser.bid_balance
+    const newBidBalance = prevBidBalance - event.data.amount
+    context.UserBidBalance.set({
+      id: fromUser.id,
+      bid_balance: newBidBalance
+    });
   }
 });
