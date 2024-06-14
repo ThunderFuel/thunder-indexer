@@ -4,7 +4,7 @@ import {
   ExchangeContract_type_id_21,
   makerOrderEntity,
   takerOrderEntity,
-  PoolContract
+  PoolContract,
 } from "generated";
 import { nanoid } from "nanoid";
 
@@ -48,7 +48,7 @@ function decodeMarketOrder(
 ): makerOrderEntity {
 
   return {
-    id: getMakerOrderId(eventOrder.side.case, eventOrder.nonce),
+    id: nanoid(),
     side: eventOrder.side.case,
     maker: eventOrder.maker.bits,
     collection: eventOrder.collection.bits,
