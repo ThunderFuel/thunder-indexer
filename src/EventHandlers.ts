@@ -81,7 +81,9 @@ function decodeTakerOrder(
   };
 }
 
-ExchangeContract.OrderPlaced.loader(({ event, context }) => {});
+ExchangeContract.OrderPlaced.loader(({ event, context }) => {
+
+});
 
 ExchangeContract.OrderPlaced.handler(({ event, context }) => {
   const makerOrder = decodeMarketOrder(event.data.order, "Placed");
@@ -92,7 +94,9 @@ ExchangeContract.OrderPlaced.handler(({ event, context }) => {
   context.MakerOrder.set(makerOrder);
 });
 
-ExchangeContract.OrderUpdated.loader(({ event, context }) => {});
+ExchangeContract.OrderUpdated.loader(({ event, context }) => {
+
+});
 
 ExchangeContract.OrderUpdated.handler(({ event, context }) => {
   const makerOrder = decodeMarketOrder(event.data.order, "Updated");
