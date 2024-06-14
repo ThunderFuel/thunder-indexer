@@ -4,7 +4,7 @@ import {
   ExchangeContract_type_id_21,
   makerOrderEntity,
   takerOrderEntity,
-  PoolContract
+  PoolContract,
 } from "generated";
 import { nanoid } from "nanoid";
 
@@ -48,7 +48,7 @@ function decodeMarketOrder(
 ): makerOrderEntity {
 
   return {
-    id: getMakerOrderId(eventOrder.side.case, eventOrder.nonce),
+    id: nanoid(),
     side: eventOrder.side.case,
     maker: eventOrder.maker.bits,
     collection: eventOrder.collection.bits,
@@ -81,7 +81,9 @@ function decodeTakerOrder(
   };
 }
 
-ExchangeContract.OrderPlaced.loader(({ event, context }) => {});
+ExchangeContract.OrderPlaced.loader(({ event, context }) => {
+
+});
 
 ExchangeContract.OrderPlaced.handler(({ event, context }) => {
   const makerOrder = decodeMarketOrder(event.data.order, "Placed");
@@ -92,7 +94,9 @@ ExchangeContract.OrderPlaced.handler(({ event, context }) => {
   context.MakerOrder.set(makerOrder);
 });
 
-ExchangeContract.OrderUpdated.loader(({ event, context }) => {});
+ExchangeContract.OrderUpdated.loader(({ event, context }) => {
+
+});
 
 ExchangeContract.OrderUpdated.handler(({ event, context }) => {
   const makerOrder = decodeMarketOrder(event.data.order, "Updated");
