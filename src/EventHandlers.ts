@@ -16,27 +16,23 @@ function tai64ToDate(tai64: bigint) {
   return new Date(+dateStr).toUTCString();
 }
 
-function getMakerOrderId(side: "Buy" | "Sell", nonce: BigInt) {
-  let id: string;
-  switch (side) {
-    case "Buy":
-      id = `Offer_${nonce}`
-      break;
-    case "Sell":
-      id = `Listing_${nonce}`
-      break;
-  }
-  return id;
+function getMakerOrderId(maker: string, side: "Buy" | "Sell", nonce: BigInt) {
+  return `${maker}:${side}:${nonce}`
 }
 
-function getMakerOrderIdFromTaker(side: "Buy" | "Sell", nonce: BigInt) {
+function getMakerOrderIdFromTaker(takerOrder: takerOrderEntity) {
   let id: string;
+
+  const side = takerOrder.side;
+  const maker = takerOrder.maker;
+  const nonce = takerOrder.nonce;
+
   switch (side) {
     case "Buy":
-      id = `Listing_${nonce}`
+      id = `${maker}:Sell:${nonce}`
       break;
     case "Sell":
-      id = `Offer_${nonce}`
+      id = `${maker}:Buy:${nonce}`
       break;
   }
   return id;
@@ -48,7 +44,7 @@ function decodeMarketOrder(
 ): makerOrderEntity {
 
   return {
-    id: nanoid(),
+    id: `${eventOrder.maker.bits}:${eventOrder.side.case}:${eventOrder.nonce}`,
     side: eventOrder.side.case,
     maker: eventOrder.maker.bits,
     collection: eventOrder.collection.bits,
@@ -109,7 +105,8 @@ ExchangeContract.OrderUpdated.handler(({ event, context }) => {
 
 ExchangeContract.OrderExecuted.loader(({ event, context }) => {
   const takerOrder = event.data.order
-  const id = getMakerOrderIdFromTaker(takerOrder.side.case, takerOrder.nonce)
+  const entity = decodeTakerOrder(takerOrder)
+  const id = getMakerOrderIdFromTaker(entity)
   context.MakerOrder.load(id)
 });
 
@@ -121,7 +118,7 @@ ExchangeContract.OrderExecuted.handler(({ event, context }) => {
   });
   context.TakerOrder.set(takerOrder);
 
-  const id = getMakerOrderIdFromTaker(takerOrder.side, takerOrder.nonce)
+  const id = getMakerOrderIdFromTaker(takerOrder)
   const makerOrder = context.MakerOrder.get(id)
   if (makerOrder) {
     context.MakerOrder.set({
@@ -144,7 +141,11 @@ ExchangeContract.OrderExecuted.handler(({ event, context }) => {
 });
 
 ExchangeContract.OrderCanceled.loader(({ event, context }) => {
-  const id = getMakerOrderId(event.data.side.case, event.data.nonce)
+  const id = getMakerOrderId(
+    event.data.user.bits,
+    event.data.side.case,
+    event.data.nonce
+  );
   context.MakerOrder.load(id);
 });
 
@@ -157,7 +158,11 @@ ExchangeContract.OrderCanceled.handler(({ event, context }) => {
     nonce: event.data.nonce,
   });
 
-  const id = getMakerOrderId(event.data.side.case, event.data.nonce)
+  const id = getMakerOrderId(
+    event.data.user.bits,
+    event.data.side.case,
+    event.data.nonce
+  );
   const makerOrder = context.MakerOrder.get(id)
   if (makerOrder) {
     context.MakerOrder.set({
