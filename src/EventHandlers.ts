@@ -150,21 +150,19 @@ ExchangeContract.OrderCanceled.loader(({ event, context }) => {
 });
 
 ExchangeContract.OrderCanceled.handler(({ event, context }) => {
-  context.OrderCanceled.set({
-    id: nanoid(),
-    user: event.data.user.bits,
-    strategy: event.data.strategy.bits,
-    side: event.data.side.case,
-    nonce: event.data.nonce,
-  });
-
   const id = getMakerOrderId(
     event.data.user.bits,
     event.data.side.case,
     event.data.nonce
   );
   const makerOrder = context.MakerOrder.get(id)
+
   if (makerOrder) {
+    context.OrderCanceled.set({
+      id: nanoid(),
+      order_id: makerOrder.id,
+    });
+
     context.MakerOrder.set({
       id,
       side: makerOrder.side,
