@@ -56,10 +56,7 @@ type OrderExecuted {
 
 type OrderCanceled {
   id: ID!
-  user: String!
-  strategy: ID!
-  side: Side!
-  nonce: BigInt!
+  order: MakerOrder!
 }
 
 type UserBidBalance {
