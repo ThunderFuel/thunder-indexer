@@ -1,10 +1,13 @@
 name: Thunder Exchange Fuel
+ecosystem: fuel
 networks:
-  - id: 0
+  - id: 9889
+    hyperfuel_config:
+      url: https://fuel.hypersync.xyz
     start_block: 0
     contracts:
       - name: Exchange
-        address: 0x5f1c2c8f0c3f2e34a36f55ae4b80e594b81b33c8a41cfdf450d35bf51211ccc5
+        address: 0x243ef4c2301f44eecbeaf1c39fee9379664b59a2e5b75317e8c7e7f26a25ed4d
         abi_file_path: ./abis/thunder_exchange-abi.json
         handler: ./src/EventHandlers.ts
         events:
@@ -13,7 +16,7 @@ networks:
           - name: OrderExecuted
           - name: OrderCanceled
       - name: Pool
-        address: 0x6e7b503001d4f3ad0cb957d0201263c674e4cc744cece5cca587beec8422662e
+        address: 0x773ca186f811c1655be9d6dcc84aef437cf25c2ebe8c367810529a8ee53fc92a
         abi_file_path: ./abis/pool-abi.json
         handler: ./src/EventHandlers.ts
         events:

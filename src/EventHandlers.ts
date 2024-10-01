@@ -1,26 +1,22 @@
 import {
-  ExchangeContract,
-  ExchangeContract_type_id_12,
-  ExchangeContract_type_id_21,
-  makerOrderEntity,
-  takerOrderEntity,
-  PoolContract,
+  Exchange,
+  Exchange_type12,
+  Exchange_type13,
+  makerOrder,
+  takerOrder,
+  Pool
 } from "generated";
 import { nanoid } from "nanoid";
 
-function tai64ToDate(tai64: bigint) {
-  const dateStr = (
-    (tai64 - BigInt(Math.pow(2, 62)) - BigInt(10)) *
-    1000n
-  ).toString();
-  return new Date(+dateStr).toUTCString();
-}
-
-function getMakerOrderId(maker: string, side: "Buy" | "Sell", nonce: BigInt) {
+function getMakerOrderId(
+  maker: string,
+  side: "Buy" | "Sell",
+  nonce: BigInt
+) {
   return `${maker}:${side}:${nonce}`
 }
 
-function getMakerOrderIdFromTaker(takerOrder: takerOrderEntity) {
+function getMakerOrderIdFromTaker(takerOrder: takerOrder) {
   let id: string;
 
   const side = takerOrder.side;
@@ -39,9 +35,11 @@ function getMakerOrderIdFromTaker(takerOrder: takerOrderEntity) {
 }
 
 function decodeMarketOrder(
-  eventOrder: ExchangeContract_type_id_12,
-  status: "Placed" | "Canceled" | "Filled" | "Updated"
-): makerOrderEntity {
+  eventOrder: Exchange_type12,
+  status: "Placed" | "Canceled" | "Filled" | "Updated",
+  create_time: number,
+  update_time: number
+): makerOrder {
 
   return {
     id: `${eventOrder.maker.bits}:${eventOrder.side.case}:${eventOrder.nonce}`,
@@ -55,15 +53,16 @@ function decodeMarketOrder(
     nonce: eventOrder.nonce,
     strategy: eventOrder.strategy.bits,
     payment_asset: eventOrder.payment_asset.bits,
-    start_time: tai64ToDate(eventOrder.start_time),
-    end_time: tai64ToDate(eventOrder.end_time),
-    status
+    status,
+    create_time,
+    update_time
   };
 }
 
 function decodeTakerOrder(
-  eventOrder: ExchangeContract_type_id_21
-): takerOrderEntity {
+  eventOrder: Exchange_type13,
+  create_time: number
+): takerOrder {
   return {
     id: nanoid(),
     taker: eventOrder.taker.bits,
@@ -74,15 +73,13 @@ function decodeTakerOrder(
     price: eventOrder.price,
     nonce: eventOrder.nonce,
     strategy: eventOrder.strategy.bits,
+    create_time
   };
 }
 
-ExchangeContract.OrderPlaced.loader(({ event, context }) => {
-
-});
-
-ExchangeContract.OrderPlaced.handler(({ event, context }) => {
-  const makerOrder = decodeMarketOrder(event.data.order, "Placed");
+Exchange.OrderPlaced.handler(async ({ event, context }) => {
+  const time = event.block.time
+  const makerOrder = decodeMarketOrder(event.params.order, "Placed", time, 0);
   context.OrderPlaced.set({
     id: nanoid(),
     order_id: makerOrder.id,
@@ -90,12 +87,15 @@ ExchangeContract.OrderPlaced.handler(({ event, context }) => {
   context.MakerOrder.set(makerOrder);
 });
 
-ExchangeContract.OrderUpdated.loader(({ event, context }) => {
-
-});
-
-ExchangeContract.OrderUpdated.handler(({ event, context }) => {
-  const makerOrder = decodeMarketOrder(event.data.order, "Updated");
+Exchange.OrderUpdated.handler(async ({ event, context }) => {
+  const time = event.block.time
+  const id = getMakerOrderId(
+    event.params.order.maker.bits,
+    event.params.order.side.case,
+    event.params.order.nonce
+  );
+  const create_time = (await context.MakerOrder.get(id))?.create_time
+  const makerOrder = decodeMarketOrder(event.params.order, "Updated", create_time!, time);
   context.OrderUpdated.set({
     id: nanoid(),
     order_id: makerOrder.id,
@@ -103,15 +103,9 @@ ExchangeContract.OrderUpdated.handler(({ event, context }) => {
   context.MakerOrder.set(makerOrder);
 });
 
-ExchangeContract.OrderExecuted.loader(({ event, context }) => {
-  const takerOrder = event.data.order
-  const entity = decodeTakerOrder(takerOrder)
-  const id = getMakerOrderIdFromTaker(entity)
-  context.MakerOrder.load(id)
-});
-
-ExchangeContract.OrderExecuted.handler(({ event, context }) => {
-  const takerOrder = decodeTakerOrder(event.data.order);
+Exchange.OrderExecuted.handler(async ({ event, context }) => {
+  const time = event.block.time
+  const takerOrder = decodeTakerOrder(event.params.order, time);
   context.OrderExecuted.set({
     id: nanoid(),
     order_id: takerOrder.id,
@@ -119,7 +113,7 @@ ExchangeContract.OrderExecuted.handler(({ event, context }) => {
   context.TakerOrder.set(takerOrder);
 
   const id = getMakerOrderIdFromTaker(takerOrder)
-  const makerOrder = context.MakerOrder.get(id)
+  const makerOrder = await context.MakerOrder.get(id)
   if (makerOrder) {
     context.MakerOrder.set({
       id,
@@ -133,29 +127,28 @@ ExchangeContract.OrderExecuted.handler(({ event, context }) => {
       nonce: makerOrder.nonce,
       strategy: makerOrder.strategy,
       payment_asset: makerOrder.payment_asset,
-      start_time: makerOrder.start_time,
-      end_time: makerOrder.end_time,
-      status: "Filled"
+      status: "Filled",
+      create_time: makerOrder.create_time,
+      update_time: time
     })
   }
 });
 
-ExchangeContract.OrderCanceled.loader(({ event, context }) => {
-  const id = getMakerOrderId(
-    event.data.user.bits,
-    event.data.side.case,
-    event.data.nonce
-  );
-  context.MakerOrder.load(id);
-});
+Exchange.OrderCanceled.handler(async ({ event, context }) => {
+  const time = event.block.time
+  context.OrderCanceled2.set({
+    id: nanoid(),
+    user: event.params.user.bits,
+    nonce: event.params.nonce,
+    side: event.params.side.case
+  });
 
-ExchangeContract.OrderCanceled.handler(({ event, context }) => {
   const id = getMakerOrderId(
-    event.data.user.bits,
-    event.data.side.case,
-    event.data.nonce
+    event.params.user.bits,
+    event.params.side.case,
+    event.params.nonce
   );
-  const makerOrder = context.MakerOrder.get(id)
+  const makerOrder = await context.MakerOrder.get(id)
 
   if (makerOrder) {
     context.OrderCanceled.set({
@@ -175,25 +168,20 @@ ExchangeContract.OrderCanceled.handler(({ event, context }) => {
       nonce: makerOrder.nonce,
       strategy: makerOrder.strategy,
       payment_asset: makerOrder.payment_asset,
-      start_time: makerOrder.start_time,
-      end_time: makerOrder.end_time,
-      status: "Canceled"
+      status: "Canceled",
+      create_time: makerOrder.create_time,
+      update_time: time
     })
   }
 });
 
-PoolContract.Deposit.loader(({ event, context }) => {
-  const userAddress = event.data.address.payload.bits
-  context.UserBidBalance.load(userAddress)
-});
-
-PoolContract.Deposit.handler(({ event, context }) => {
-  const userAddress = event.data.address.payload.bits
-  const user = context.UserBidBalance.get(userAddress)
+Pool.Deposit.handler(async ({ event, context }) => {
+  const userAddress = event.params.address.payload.bits
+  const user = await context.UserBidBalance.get(userAddress)
 
   if (user) {
     const prevBidBalance = user.bid_balance
-    const newBidBalance = prevBidBalance + event.data.amount
+    const newBidBalance = prevBidBalance + event.params.amount
     context.UserBidBalance.set({
       id: user.id,
       bid_balance: newBidBalance
@@ -201,23 +189,18 @@ PoolContract.Deposit.handler(({ event, context }) => {
   } else {
     context.UserBidBalance.set({
       id: userAddress,
-      bid_balance: event.data.amount
+      bid_balance: event.params.amount
     });
   }
 });
 
-PoolContract.Withdrawal.loader(({ event, context }) => {
-  const userAddress = event.data.address.payload.bits
-  context.UserBidBalance.load(userAddress)
-});
-
-PoolContract.Withdrawal.handler(({ event, context }) => {
-  const userAddress = event.data.address.payload.bits
-  const user = context.UserBidBalance.get(userAddress)
+Pool.Withdrawal.handler(async ({ event, context }) => {
+  const userAddress = event.params.address.payload.bits
+  const user = await context.UserBidBalance.get(userAddress)
 
   if (user) {
     const prevBidBalance = user.bid_balance
-    const newBidBalance = prevBidBalance - event.data.amount
+    const newBidBalance = prevBidBalance - event.params.amount
     context.UserBidBalance.set({
       id: user.id,
       bid_balance: newBidBalance
@@ -225,19 +208,14 @@ PoolContract.Withdrawal.handler(({ event, context }) => {
   }
 });
 
-PoolContract.Transfer.loader(({ event, context }) => {
-  const fromUserAddress = event.data.from.payload.bits
-  context.UserBidBalance.load(fromUserAddress)
-});
+Pool.Transfer.handler(async ({ event, context }) => {
+  const fromUserAddress = event.params.from.payload.bits
 
-PoolContract.Transfer.handler(({ event, context }) => {
-  const fromUserAddress = event.data.from.payload.bits
-
-  const fromUser = context.UserBidBalance.get(fromUserAddress)
+  const fromUser = await context.UserBidBalance.get(fromUserAddress)
 
   if (fromUser) {
     const prevBidBalance = fromUser.bid_balance
-    const newBidBalance = prevBidBalance - event.data.amount
+    const newBidBalance = prevBidBalance - event.params.amount
     context.UserBidBalance.set({
       id: fromUser.id,
       bid_balance: newBidBalance
