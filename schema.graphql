@@ -22,9 +22,9 @@ type MakerOrder {
   nonce: BigInt!
   strategy: ID!
   payment_asset: ID!
-  start_time: String!
-  end_time: String!
   status: Status!
+  create_time: Int!
+  update_time: Int!
 }
 
 type TakerOrder {
@@ -37,6 +37,7 @@ type TakerOrder {
   token_id: ID!
   collection: ID!
   strategy: ID!
+  create_time: Int!
 }
 
 type OrderPlaced {
@@ -57,6 +58,13 @@ type OrderExecuted {
 type OrderCanceled {
   id: ID!
   order: MakerOrder!
+}
+
+type OrderCanceled2 {
+  id: ID!
+  user: String!
+  nonce: BigInt!
+  side: Side!
 }
 
 type UserBidBalance {
