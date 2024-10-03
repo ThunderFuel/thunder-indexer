@@ -2,8 +2,6 @@ name: Thunder Exchange Fuel
 ecosystem: fuel
 networks:
   - id: 9889
-    hyperfuel_config:
-      url: https://fuel.hypersync.xyz
     start_block: 0
     contracts:
       - name: Exchange
