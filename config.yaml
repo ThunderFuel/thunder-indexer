@@ -21,3 +21,4 @@ networks:
           - name: Deposit
           - name: Withdrawal
           - name: Transfer
+            logId: "14880471643791846054"
