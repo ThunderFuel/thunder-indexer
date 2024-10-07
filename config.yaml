@@ -2,8 +2,6 @@ name: Thunder Exchange Fuel
 ecosystem: fuel
 networks:
   - id: 9889
-    hyperfuel_config:
-      url: https://fuel.hypersync.xyz
     start_block: 0
     contracts:
       - name: Exchange
@@ -30,3 +28,9 @@ networks:
             logId: '12195664052085097644'
           - name: Withdrawal
             logId: '13279905576758129435'
+      - name: Nft
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: Mint
+          - name: Burn
+          - name: Transfer
