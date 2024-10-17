@@ -71,3 +71,8 @@ type UserBidBalance {
   id: ID!
   bid_balance: BigInt!
 }
+
+type Owner {
+  id: String!
+  nfts: [ID!]!
+}

@@ -4,7 +4,8 @@ import {
   Exchange_type13,
   makerOrder,
   takerOrder,
-  Pool
+  Pool,
+  Nft
 } from "generated";
 import { nanoid } from "nanoid";
 
@@ -209,16 +210,36 @@ Pool.Withdrawal.handler(async ({ event, context }) => {
 });
 
 Pool.Transfer.handler(async ({ event, context }) => {
-  // const fromUserAddress = event.params.from.payload.bits
+  const fromUserAddress = event.params.from.payload.bits
 
-  // const fromUser = await context.UserBidBalance.get(fromUserAddress)
+  const fromUser = await context.UserBidBalance.get(fromUserAddress)
 
-  // if (fromUser) {
-  //   const prevBidBalance = fromUser.bid_balance
-  //   const newBidBalance = prevBidBalance - event.params.amount
-  //   context.UserBidBalance.set({
-  //     id: fromUser.id,
-  //     bid_balance: newBidBalance
-  //   });
-  // }
+  if (fromUser) {
+    const prevBidBalance = fromUser.bid_balance
+    const newBidBalance = prevBidBalance - event.params.amount
+    context.UserBidBalance.set({
+      id: fromUser.id,
+      bid_balance: newBidBalance
+    });
+  }
+});
+
+Nft.Transfer.handler(async ({ event, context }) => {
+  const toAddr = event.params.to;
+  const nft = event.params.assetId;
+  const owner = await context.Owner.get(toAddr);
+
+  if (owner) {
+    const currentNfts = owner.nfts;
+    currentNfts.push(nft);
+    context.Owner.set({
+      id: toAddr,
+      nfts: currentNfts
+    })
+  } else {
+    context.Owner.set({
+      id: toAddr,
+      nfts: [nft]
+    })
+  }
 });
