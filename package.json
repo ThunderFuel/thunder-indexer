@@ -24,6 +24,7 @@
     "chai": "4.3.10",
     "envio": "2.4.1",
     "ethers": "6.8.0",
+    "fuels": "^0.96.1",
     "nanoid": "3.3.7"
   },
   "optionalDependencies": {

@@ -5,8 +5,13 @@ import {
   makerOrder,
   takerOrder,
   Pool,
-  Nft
+  Nft,
+  Props,
+  eventLog,
+  fuelTransferParams,
+  handlerContext
 } from "generated";
+import { getMintedAssetId } from "fuels"
 import { nanoid } from "nanoid";
 
 function getMakerOrderId(
@@ -76,6 +81,13 @@ function decodeTakerOrder(
     strategy: eventOrder.strategy.bits,
     create_time
   };
+}
+
+function convertToSubId(id: number | BigInt) {
+  const zeroX = "0x"
+  const fill0 = id.toString().padStart(64, "0")
+  const subId = fill0.padStart(66, zeroX)
+  return subId
 }
 
 Exchange.OrderPlaced.handler(async ({ event, context }) => {
@@ -224,14 +236,23 @@ Pool.Transfer.handler(async ({ event, context }) => {
   }
 });
 
-Nft.Transfer.handler(async ({ event, context }) => {
+async function indexMints(
+  collectionAddr: string,
+  event: eventLog<fuelTransferParams>,
+  context: handlerContext,
+  startingIndex: bigint,
+) {
   const toAddr = event.params.to;
-  const nft = event.params.assetId;
   const owner = await context.Owner.get(toAddr);
+  const collection = await context.Collection.get(collectionAddr);
+  const totalSupply = collection ? collection.total_supply : startingIndex;
+  const subId = convertToSubId(totalSupply);
+  const tokenKey = `${collectionAddr}:${subId}`
+  const nft_owner = `${totalSupply}=>${toAddr}`
 
   if (owner) {
     const currentNfts = owner.nfts;
-    currentNfts.push(nft);
+    currentNfts.push(tokenKey);
     context.Owner.set({
       id: toAddr,
       nfts: currentNfts
@@ -239,7 +260,33 @@ Nft.Transfer.handler(async ({ event, context }) => {
   } else {
     context.Owner.set({
       id: toAddr,
-      nfts: [nft]
+      nfts: [tokenKey]
     })
   }
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: totalSupply + 1n,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: totalSupply + 1n,
+      owners: [nft_owner]
+    })
+  }
+}
+
+Nft.Transfer.handler(async ({ event, context }) => {
+  const collectionAddr = "0x11c3c096431a0d0d1eee9c0240aab23a1dd1b74d008259f37bf15a480e186639"
+  await indexMints(collectionAddr, event, context, 0n)
+});
+
+Props.Transfer.handler(async ({ event, context }) => {
+  const collectionAddr = "0x3f3f87bb15c693784e90521c64bac855ce23d971356a6ccd57aa92e02e696432"
+  await indexMints(collectionAddr, event, context, 1n)
 });

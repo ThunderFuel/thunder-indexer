@@ -36,3 +36,11 @@ networks:
           - name: Mint
           - name: Burn
           - name: Transfer
+      - name: Props
+        address: 0x3f3f87bb15c693784e90521c64bac855ce23d971356a6ccd57aa92e02e696432
+        abi_file_path: ./abis/props-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: Mint
+          - name: Burn
+          - name: Transfer
