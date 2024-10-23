@@ -152,6 +152,41 @@ importers:
         specifier: 17.7.2
         version: 17.7.2
 
+  props:
+    dependencies:
+      envio:
+        specifier: 2.5.2
+        version: 2.5.2
+    optionalDependencies:
+      generated:
+        specifier: ./generated
+        version: link:generated
+    devDependencies:
+      '@types/chai':
+        specifier: ^4.3.11
+        version: 4.3.16
+      '@types/mocha':
+        specifier: 10.0.6
+        version: 10.0.6
+      '@types/node':
+        specifier: 20.8.8
+        version: 20.8.8
+      chai:
+        specifier: 4.3.10
+        version: 4.3.10
+      mocha:
+        specifier: 10.2.0
+        version: 10.2.0
+      ts-mocha:
+        specifier: ^10.0.0
+        version: 10.0.0(mocha@10.2.0)
+      ts-node:
+        specifier: 10.9.1
+        version: 10.9.1(@types/node@20.8.8)(typescript@5.2.2)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+
 packages:
 
   '@adraffy/ens-normalize@1.10.0':
@@ -936,8 +971,18 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  envio-darwin-arm64@2.5.2:
+    resolution: {integrity: sha512-O/+sgImwhQJXlaypMgESWRUzVlkA3dH+2JpdI1LcIVuCpRN/OvBUbRxDHOU79uxeGXvUeeCn1zSGukod6hxG7g==}
+    cpu: [arm64]
+    os: [darwin]
+
   envio-darwin-x64@2.4.1:
     resolution: {integrity: sha512-SKqI2hQmjmqlDYCwFaEK6TDJMLL/UE/wWlUIzsAY5drJQTwAL0mBXzUfQM8JbMgDoxeWyKNegUV1vCuTmCDREw==}
+    cpu: [x64]
+    os: [darwin]
+
+  envio-darwin-x64@2.5.2:
+    resolution: {integrity: sha512-/K1XCoIXnjTG4LWUqUUPpSdIBFC1tsryQLp1c040YNnsqVmE9EJufclUL0dc2Rf8SNqC/XgNPGWlndcBDSJWFw==}
     cpu: [x64]
     os: [darwin]
 
@@ -946,13 +991,27 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  envio-linux-arm64@2.5.2:
+    resolution: {integrity: sha512-OqrxwwdfN0mcipnq8TQYQL9yZHoHgr7QB8tILjkjtRhz9LOhyjjqlwmNKiDjbpQ8nR2odORKvTlJGEvHb2AO5A==}
+    cpu: [arm64]
+    os: [linux]
+
   envio-linux-x64@2.4.1:
     resolution: {integrity: sha512-aeVQ9I4zum6X+kBeJrFev/bTDePZRSlt6HytcnqJd7+iWagQggUejhcrSccp2eRSeQ95sGp+F+lQOFfWJHyEJQ==}
     cpu: [x64]
     os: [linux]
 
+  envio-linux-x64@2.5.2:
+    resolution: {integrity: sha512-qpJDjNeY8b8o1v47ulQgu0RGiN8T3BTg2veCRQHeHgpBqh1f7otPEqX2apADo5K+wYlUsH9HXJfbf25SLEQBdw==}
+    cpu: [x64]
+    os: [linux]
+
   envio@2.4.1:
     resolution: {integrity: sha512-GsHv4S/mAzr//XCyTHFBnfd1CZFlfaG+wcWJkpeguzhnttNSOMJXCR4UPG0PxV2cZYiA3eVrOSPn58fTzk2G5g==}
+    hasBin: true
+
+  envio@2.5.2:
+    resolution: {integrity: sha512-fWHmggBijehdtOkSErHgASUiEhPwDi4ouxOdgHsi0B/DkabgwTYwa8Z+pBhf324exHhGRhAVxZwBtoKI98MUGA==}
     hasBin: true
 
   es-define-property@1.0.0:
@@ -1171,6 +1230,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -2759,13 +2819,25 @@ snapshots:
   envio-darwin-arm64@2.4.1:
     optional: true
 
+  envio-darwin-arm64@2.5.2:
+    optional: true
+
   envio-darwin-x64@2.4.1:
+    optional: true
+
+  envio-darwin-x64@2.5.2:
     optional: true
 
   envio-linux-arm64@2.4.1:
     optional: true
 
+  envio-linux-arm64@2.5.2:
+    optional: true
+
   envio-linux-x64@2.4.1:
+    optional: true
+
+  envio-linux-x64@2.5.2:
     optional: true
 
   envio@2.4.1:
@@ -2774,6 +2846,13 @@ snapshots:
       envio-darwin-x64: 2.4.1
       envio-linux-arm64: 2.4.1
       envio-linux-x64: 2.4.1
+
+  envio@2.5.2:
+    optionalDependencies:
+      envio-darwin-arm64: 2.5.2
+      envio-darwin-x64: 2.5.2
+      envio-linux-arm64: 2.5.2
+      envio-linux-x64: 2.5.2
 
   es-define-property@1.0.0:
     dependencies:

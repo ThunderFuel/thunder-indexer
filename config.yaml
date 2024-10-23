@@ -44,3 +44,5 @@ networks:
           - name: Mint
           - name: Burn
           - name: Transfer
+          - name: MintEvent
+            logId: '9878893099844501832'
