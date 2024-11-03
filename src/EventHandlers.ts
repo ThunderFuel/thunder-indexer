@@ -7,6 +7,7 @@ import {
   Pool,
   Nft,
   Props,
+  Griffy,
   eventLog,
   fuelTransferParams,
   handlerContext
@@ -295,6 +296,30 @@ Props.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0x3f3f87bb15c693784e90521c64bac855ce23d971356a6ccd57aa92e02e696432"
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.new_minted_id
+  const collection = await context.Collection.get(collectionAddr);
+  const nft_owner = `${token_id}=>${receipent}`
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: [nft_owner]
+    })
+  }
+});
+
+Griffy.MintEvent.handler(async ({ event, context }) => {
+  const collectionAddr = "0xc6d4275942bb691fc652c914327473ce739dd8df33a48ff33a2b2f7bcfffde20"
+  const receipent = event.params.recipient.payload.bits
+  const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);
   const nft_owner = `${token_id}=>${receipent}`
 
