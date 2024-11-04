@@ -317,7 +317,7 @@ Props.MintEvent.handler(async ({ event, context }) => {
 });
 
 Griffy.MintEvent.handler(async ({ event, context }) => {
-  const collectionAddr = "0xc6d4275942bb691fc652c914327473ce739dd8df33a48ff33a2b2f7bcfffde20"
+  const collectionAddr = "0x3d199971f07f958a17a4f666a45a6619e4eebc5247efc911e723dbabd51e572f"
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);
