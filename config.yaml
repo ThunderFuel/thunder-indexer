@@ -47,7 +47,7 @@ networks:
           - name: MintEvent
             logId: '9878893099844501832'
       - name: Griffy
-        address: 0x3d199971f07f958a17a4f666a45a6619e4eebc5247efc911e723dbabd51e572f
+        address: 0x0c10a1c5ef62b346a27a16cc4c270f5e74c1c94a7f8233fcf0223716b6c9f326
         abi_file_path: ./abis/erc721-v2-abi.json
         handler: ./src/EventHandlers.ts
         events:
