@@ -53,3 +53,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: FuelPumps
+        address: 0x45c964371490bdfc2610ca116853d22a9b6e0de1abb67f61b81ab9d291b0015c
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
