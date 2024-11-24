@@ -370,7 +370,6 @@ FuelPumps.MintEvent.handler(async ({ event, context }) => {
 
 Sangoro.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0xb03ec5c6eeaf6d09ed6755e21dff896234c8f509b813f3ff17ef14a436fa8462"
-
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);
