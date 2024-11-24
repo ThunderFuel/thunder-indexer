@@ -9,6 +9,7 @@ import {
   Props,
   Griffy,
   FuelPumps,
+  Sangoro,
   eventLog,
   fuelTransferParams,
   handlerContext
@@ -344,6 +345,31 @@ Griffy.MintEvent.handler(async ({ event, context }) => {
 
 FuelPumps.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0x45c964371490bdfc2610ca116853d22a9b6e0de1abb67f61b81ab9d291b0015c"
+
+  const receipent = event.params.recipient.payload.bits
+  const token_id = event.params.token_id
+  const collection = await context.Collection.get(collectionAddr);
+  const nft_owner = `${token_id}=>${receipent}`
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: [nft_owner]
+    })
+  }
+});
+
+Sangoro.MintEvent.handler(async ({ event, context }) => {
+  const collectionAddr = "0xb03ec5c6eeaf6d09ed6755e21dff896234c8f509b813f3ff17ef14a436fa8462"
 
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id

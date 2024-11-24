@@ -60,3 +60,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: Sangoro
+        address: 0xb03ec5c6eeaf6d09ed6755e21dff896234c8f509b813f3ff17ef14a436fa8462
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
