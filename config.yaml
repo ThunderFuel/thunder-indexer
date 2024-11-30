@@ -67,3 +67,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: FuelDudes
+        address: 0x65aa85875bf92fb5b487ade154f88507d74b233ef901b4a172f4616b527a4784
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
