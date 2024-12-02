@@ -74,3 +74,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: FuelPengus
+        address: 0xaa919d413a57cb6c577b2e172480cbe2f88df0e28203fed52249cabca6cee74a
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'

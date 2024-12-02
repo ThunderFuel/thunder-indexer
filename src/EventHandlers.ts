@@ -11,6 +11,7 @@ import {
   FuelPumps,
   Sangoro,
   FuelDudes,
+  FuelPengus,
   eventLog,
   fuelTransferParams,
   handlerContext
@@ -395,6 +396,30 @@ Sangoro.MintEvent.handler(async ({ event, context }) => {
 
 FuelDudes.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0x65aa85875bf92fb5b487ade154f88507d74b233ef901b4a172f4616b527a4784"
+  const receipent = event.params.recipient.payload.bits
+  const token_id = event.params.token_id
+  const collection = await context.Collection.get(collectionAddr);
+  const nft_owner = `${token_id}=>${receipent}`
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: [nft_owner]
+    })
+  }
+});
+
+FuelPengus.MintEvent.handler(async ({ event, context }) => {
+  const collectionAddr = "0xaa919d413a57cb6c577b2e172480cbe2f88df0e28203fed52249cabca6cee74a"
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);
