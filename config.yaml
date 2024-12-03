@@ -81,3 +81,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: FuelMonkees
+        address: 0x0d34ec513cbaf7e15737120725cd3e235a8fd1716fa0eedc5da4a64c182e5a9f
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
