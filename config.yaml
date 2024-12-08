@@ -88,3 +88,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: FuelRocks
+        address: 0x4365ec565b25febe517770709edb54f081fc67fbb4f561ac53b2b608371079db
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
