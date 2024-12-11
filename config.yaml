@@ -95,3 +95,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: FuelBomba
+        address: 0x59b10bd361740618f12bba00f1083ef304a294b37ed7a8756c1b9cfc9b491b16
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
