@@ -15,6 +15,7 @@ import {
   FuelMonkees,
   FuelRocks,
   FuelBomba,
+  BearBros,
   eventLog,
   fuelTransferParams,
   handlerContext
@@ -495,6 +496,30 @@ FuelRocks.MintEvent.handler(async ({ event, context }) => {
 
 FuelBomba.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0x59b10bd361740618f12bba00f1083ef304a294b37ed7a8756c1b9cfc9b491b16"
+  const receipent = event.params.recipient.payload.bits
+  const token_id = event.params.token_id
+  const collection = await context.Collection.get(collectionAddr);
+  const nft_owner = `${token_id}=>${receipent}`
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: [nft_owner]
+    })
+  }
+});
+
+BearBros.MintEvent.handler(async ({ event, context }) => {
+  const collectionAddr = "0xf0b6e2320caccb9071e45b1150b4da6f5edf74e7375ac6c87084822a87832de2"
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);

@@ -102,3 +102,10 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: BearBros
+        address: 0xf0b6e2320caccb9071e45b1150b4da6f5edf74e7375ac6c87084822a87832de2
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
