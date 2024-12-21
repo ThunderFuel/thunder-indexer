@@ -109,3 +109,11 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: AlienInva
+        address: 0xc5c219d360dcddbdaad2e0a33afc3550794ed4dfc484efb13562023189a08851
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
+

@@ -16,6 +16,7 @@ import {
   FuelRocks,
   FuelBomba,
   BearBros,
+  AlienInva,
   eventLog,
   fuelTransferParams,
   handlerContext
@@ -520,6 +521,30 @@ FuelBomba.MintEvent.handler(async ({ event, context }) => {
 
 BearBros.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0xf0b6e2320caccb9071e45b1150b4da6f5edf74e7375ac6c87084822a87832de2"
+  const receipent = event.params.recipient.payload.bits
+  const token_id = event.params.token_id
+  const collection = await context.Collection.get(collectionAddr);
+  const nft_owner = `${token_id}=>${receipent}`
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: [nft_owner]
+    })
+  }
+});
+
+AlienInva.MintEvent.handler(async ({ event, context }) => {
+  const collectionAddr = "0xc5c219d360dcddbdaad2e0a33afc3550794ed4dfc484efb13562023189a08851"
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);
