@@ -116,4 +116,11 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: Koby
+        address: 0x202b55f66b8bafaf3b4fdf0653f1a4320607781dbd368bb576bc09250dd7dbbe
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
 
