@@ -18,6 +18,7 @@ import {
   BearBros,
   AlienInva,
   Koby,
+  AIQX,
   eventLog,
   fuelTransferParams,
   handlerContext
@@ -570,6 +571,30 @@ AlienInva.MintEvent.handler(async ({ event, context }) => {
 
 Koby.MintEvent.handler(async ({ event, context }) => {
   const collectionAddr = "0x202b55f66b8bafaf3b4fdf0653f1a4320607781dbd368bb576bc09250dd7dbbe"
+  const receipent = event.params.recipient.payload.bits
+  const token_id = event.params.token_id
+  const collection = await context.Collection.get(collectionAddr);
+  const nft_owner = `${token_id}=>${receipent}`
+
+  if (collection) {
+    const currentNftOwners = collection.owners
+    currentNftOwners.push(nft_owner)
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: currentNftOwners
+    })
+  } else {
+    context.Collection.set({
+      id: collectionAddr,
+      total_supply: token_id,
+      owners: [nft_owner]
+    })
+  }
+});
+
+AIQX.MintEvent.handler(async ({ event, context }) => {
+  const collectionAddr = "0x5d0188a9f77c4e5e48c459b5d02ccedac1a26d45b9f9c9e886f8563395bad32d"
   const receipent = event.params.recipient.payload.bits
   const token_id = event.params.token_id
   const collection = await context.Collection.get(collectionAddr);

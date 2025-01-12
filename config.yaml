@@ -123,4 +123,11 @@ networks:
         events:
           - name: MintEvent
             logId: '10159620282815190840'
+      - name: AIQX
+        address: 0x5d0188a9f77c4e5e48c459b5d02ccedac1a26d45b9f9c9e886f8563395bad32d
+        abi_file_path: ./abis/erc721-v2-abi.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - name: MintEvent
+            logId: '10159620282815190840'
 
