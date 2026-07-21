@@ -1,6 +1,6 @@
 name: Thunder Exchange Fuel
 ecosystem: fuel
-networks:
+chains:
   - id: 9889
     start_block: 0
     contracts:
