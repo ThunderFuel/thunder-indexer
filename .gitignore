@@ -32,3 +32,5 @@ build
 *.bs.js
 generated
 props
+.env
+.envio/

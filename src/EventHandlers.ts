@@ -1,28 +1,4 @@
-import {
-  Exchange,
-  Exchange_type12,
-  Exchange_type13,
-  makerOrder,
-  takerOrder,
-  Pool,
-  Nft,
-  Props,
-  Griffy,
-  FuelPumps,
-  Sangoro,
-  FuelDudes,
-  FuelPengus,
-  FuelMonkees,
-  FuelRocks,
-  FuelBomba,
-  BearBros,
-  AlienInva,
-  Koby,
-  AIQX,
-  eventLog,
-  fuelTransferParams,
-  handlerContext
-} from "generated";
+import { type Exchange, type Exchange_type12, type Exchange_type13, makerOrder, takerOrder, type Pool, type Nft, type Props, type Griffy, type FuelPumps, type Sangoro, type FuelDudes, type FuelPengus, type FuelMonkees, type FuelRocks, type FuelBomba, type BearBros, type AlienInva, type Koby, type AIQX, eventLog, fuelTransferParams, type EvmOnEventContext } from "envio";
 import { getMintedAssetId } from "fuels"
 import { nanoid } from "nanoid";
 
@@ -251,7 +227,7 @@ Pool.Transfer.handler(async ({ event, context }) => {
 async function indexMints(
   collectionAddr: string,
   event: eventLog<fuelTransferParams>,
-  context: handlerContext,
+  context: EvmOnEventContext,
   startingIndex: bigint,
 ) {
   const toAddr = event.params.to;
